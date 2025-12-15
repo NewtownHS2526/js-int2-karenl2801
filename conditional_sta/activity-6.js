@@ -26,6 +26,43 @@ const user = {
 //
 // Challenge: Return detailed breakdown: {original, discounts, final, savings}
 
+function calculateFinalPrice(user) {
+    const { age, isMember, purchaseAmount, hasCoupon } = user;
+    const discounts = [];
+
+    // Determine eligible discounts
+    const ageDiscount = age >= 65 ? 0.10 : 0;
+    const memberDiscount = isMember ? 0.05 : 0;
+    const couponDiscount = hasCoupon ? 0.15 : 0;
+    const largePurchaseDiscount = purchaseAmount > 200 ? 0.10 : 0;
+
+    // Pick highest discount (except member stacks)
+    const otherDiscounts = [ageDiscount, couponDiscount, largePurchaseDiscount];
+    const maxOtherDiscount = Math.max(...otherDiscounts);
+
+    let appliedDiscount = maxOtherDiscount;
+    if (isMember) appliedDiscount += memberDiscount;
+
+    // Calculate final price
+    let finalPrice = purchaseAmount * (1 - appliedDiscount);
+    if (finalPrice < 10) finalPrice = 10;
+
+    return {
+        original: purchaseAmount,
+        discounts: {
+            ageDiscount,
+            memberDiscount,
+            couponDiscount,
+            largePurchaseDiscount
+        },
+        final: finalPrice,
+        savings: purchaseAmount - finalPrice
+    };
+}
+
+// Example:
+console.log(calculateFinalPrice(user));
+
 // ============================================================================
 // Problem 2: State Machine
 // Implement a simple state machine using conditionals
@@ -47,6 +84,28 @@ const user = {
 //    - Implement transitions between states
 //    - Validate that transitions are legal
 //    - Use switch statements for state handling
+
+const TrafficLight = {
+    states: ["red", "green", "yellow"],
+    
+    changeState(currentState) {
+        switch (currentState) {
+            case "red": return "green";
+            case "green": return "yellow";
+            case "yellow": return "red";
+            default: return "invalid";
+        }
+    },
+
+    canGo(currentState) {
+        return currentState === "green";
+    }
+};
+
+// Example
+console.log(TrafficLight.changeState("red"));   // green
+console.log(TrafficLight.canGo("green"));      // true
+console.log(TrafficLight.canGo("yellow"));     // false
 
 // ============================================================================
 // Problem 3: Conditional-Based Routing
@@ -75,6 +134,18 @@ const routes = {
 //    - Supports route parameters: "/user/:id"
 //    - Supports protected routes (requires authentication)
 //    - Returns appropriate response or error
+
+function getPage(path) {
+    // Extract route without query params
+    const route = path.split("?")[0];
+    if (routes[route]) return routes[route];
+    return "404 - Not Found";
+}
+
+// Example
+console.log(getPage("/"));                     // Home
+console.log(getPage("/products?category=electronics")); // Products
+console.log(getPage("/invalid"));              // 404 - Not Found
 
 // ============================================================================
 // Problem 4: Complete Conditional System
@@ -123,3 +194,63 @@ const library = {
 // - Uses nested conditionals, guard clauses, and logical operators
 // - Handles all edge cases
 
+const LibrarySystem = {
+    books: library.books,
+    members: library.members,
+
+    findAvailableBooks(genre, minRating) {
+        return this.books.filter(book => {
+            if (!book.available) return false;
+            if (genre && book.genre !== genre) return false;
+            if (minRating && book.rating < minRating) return false;
+            return true;
+        });
+    },
+
+    canBorrowBook(memberId, bookTitle) {
+        const member = this.members.find(m => m.id === memberId);
+        if (!member) return { canBorrow: false, reason: "Member not found" };
+
+        const book = this.books.find(b => b.title === bookTitle);
+        if (!book) return { canBorrow: false, reason: "Book not found" };
+        if (!book.available) return { canBorrow: false, reason: "Book not available" };
+
+        const limit = member.type === "student" ? 3 : 10;
+        if (member.booksBorrowed >= limit) return { canBorrow: false, reason: "Borrowing limit reached" };
+
+        return { canBorrow: true, reason: "Eligible to borrow" };
+    },
+
+    recommendBooks(memberId) {
+        const member = this.members.find(m => m.id === memberId);
+        if (!member) return [];
+
+        // Determine preferred genre from previous borrowed books
+        const borrowedBooks = this.books.filter(b => !b.available && b.title.includes(member.name));
+        const preferredGenre = borrowedBooks[0]?.genre || "Fiction";
+
+        // Recommend top 3 available books in preferred genre
+        return this.findAvailableBooks(preferredGenre)
+            .sort((a, b) => b.rating - a.rating)
+            .slice(0, 3);
+    },
+
+    borrowBook(memberId, bookTitle) {
+        const eligibility = this.canBorrowBook(memberId, bookTitle);
+        if (!eligibility.canBorrow) return { success: false, message: eligibility.reason };
+
+        const member = this.members.find(m => m.id === memberId);
+        const book = this.books.find(b => b.title === bookTitle);
+
+        // Update counts
+        member.booksBorrowed += 1;
+        book.available = false;
+
+        return { success: true, message: `${member.name} successfully borrowed "${book.title}"` };
+    }
+};
+
+// Example usage
+console.log(LibrarySystem.findAvailableBooks("Fiction", 4.5));
+console.log(LibrarySystem.canBorrowBook(1, "Book A"));
+console.log(LibrarySystem.borrowBook(1, "Book A"));

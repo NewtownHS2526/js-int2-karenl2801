@@ -100,6 +100,7 @@ const person = {
 person.traditional(); // "Alice"
 person.arrow();       // undefined  (or empty string depending on environment)
 
+//i'd fix it like this:
 arrow: function() {
     console.log(this.name);
 }

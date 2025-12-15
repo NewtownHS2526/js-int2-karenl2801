@@ -17,6 +17,33 @@ const temperature = 25;
 //    - "Teen" if age >= 13 and age < 18
 //    - "Adult" if age >= 18
 
+// 1. Check if age is 18 or older
+if (age >= 18) {
+    console.log("Adult");
+}
+
+// 2. Check if temperature is above 30
+if (temperature > 30) {
+    console.log("Hot day");
+}
+
+// 3. Check if temperature is below 0
+if (temperature < 0) {
+    console.log("Freezing");
+}
+
+// 4. Function to categorize age
+const checkAgeStatus = (age) => {
+    if (age < 13) return "Child";
+    else if (age >= 13 && age < 18) return "Teen";
+    else return "Adult";
+};
+
+// Test
+console.log(checkAgeStatus(10)); // Child
+console.log(checkAgeStatus(15)); // Teen
+console.log(checkAgeStatus(20)); // Adult
+
 // ============================================================================
 // Problem 2: if-else Statements
 // Practice decision-making with two outcomes
@@ -36,6 +63,44 @@ const isMember = true;
 //    - Takes a score (0-100)
 //    - Returns letter grade: A (90+), B (80-89), C (70-79), D (60-69), F (<60)
 //    - Use if-else chains
+
+// 1. Pass/Fail based on score
+if (score >= 70) {
+    console.log("Pass");
+} else {
+    console.log("Fail");
+}
+
+// 2. Membership check
+if (isMember) {
+    console.log("Welcome back!");
+} else {
+    console.log("Join now!");
+}
+
+// 3. Discount function
+const checkDiscount = (price, isMember) => {
+    if (isMember) return price * 0.9; // 10% discount
+    else return price;
+};
+
+// Test
+console.log(checkDiscount(100, true));  // 90
+console.log(checkDiscount(100, false)); // 100
+
+// 4. Grade assignment function
+const gradeAssignment = (score) => {
+    if (score >= 90) return "A";
+    else if (score >= 80) return "B";
+    else if (score >= 70) return "C";
+    else if (score >= 60) return "D";
+    else return "F";
+};
+
+// Test
+console.log(gradeAssignment(85)); // B
+console.log(gradeAssignment(72)); // C
+console.log(gradeAssignment(59)); // F
 
 // ============================================================================
 // Problem 3: if-else if-else Chains
@@ -59,6 +124,46 @@ const time = 14; // hours in 24-hour format
 // 3. Challenge: Write a function 'calculateShipping' that:
 //    - Takes weight (in kg)
 //    - Returns shipping cost: $5 (< 1kg), $10 (1-5kg), $20 (5-10kg), $50 (> 10kg)
+
+// 1. Categorize time
+if (time >= 5 && time < 12) {
+    console.log("Morning");
+} else if (time >= 12 && time < 17) {
+    console.log("Afternoon");
+} else if (time >= 17 && time < 21) {
+    console.log("Evening");
+} else {
+    console.log("Night");
+}
+
+// 2. Weather advice function
+const getWeatherAdvice = (temp) => {
+    if (temp < 10) return "Too cold";
+    else if (temp <= 15) return "Cold";
+    else if (temp <= 20) return "Cool";
+    else if (temp <= 25) return "Warm";
+    else if (temp <= 30) return "Hot";
+    else return "Too hot";
+};
+
+// Test
+console.log(getWeatherAdvice(8));  // Too cold
+console.log(getWeatherAdvice(22)); // Warm
+console.log(getWeatherAdvice(31)); // Too hot
+
+// 3. Shipping cost function
+const calculateShipping = (weight) => {
+    if (weight < 1) return 5;
+    else if (weight <= 5) return 10;
+    else if (weight <= 10) return 20;
+    else return 50;
+};
+
+// Test
+console.log(calculateShipping(0.5));  // 5
+console.log(calculateShipping(3));    // 10
+console.log(calculateShipping(7));    // 20
+console.log(calculateShipping(12));   // 50
 
 // ============================================================================
 // Problem 4: Nested Conditionals
@@ -89,3 +194,48 @@ const hasInsurance = true;
 //    - If grade < 70, return "Failed"
 //    - Use nested conditionals
 
+// 1. Nested checks for age, license, insurance
+if (age2 >= 18) {
+    if (hasLicense) {
+        if (hasInsurance) {
+            console.log("You can drive safely!");
+        } else {
+            console.log("Get insurance to drive.");
+        }
+    } else {
+        console.log("You need a license to drive.");
+    }
+} else {
+    console.log("You are too young to drive.");
+}
+
+// 2. canRentCar function
+const canRentCar = (age, hasLicense, hasInsurance) => {
+    if (age >= 21) {
+        if (hasLicense) {
+            if (hasInsurance) return true;
+            else return false;
+        } else return false;
+    } else return false;
+};
+
+// Test
+console.log(canRentCar(22, true, true)); // true
+console.log(canRentCar(20, true, true)); // false
+
+// 3. evaluateStudent function
+const evaluateStudent = (grade, attendance) => {
+    if (grade >= 70) {
+        if (attendance >= 90) return "Excellent";
+        else if (attendance >= 80) return "Good";
+        else return "Needs improvement";
+    } else {
+        return "Failed";
+    }
+};
+
+// Test
+console.log(evaluateStudent(75, 92)); // Excellent
+console.log(evaluateStudent(75, 85)); // Good
+console.log(evaluateStudent(75, 70)); // Needs improvement
+console.log(evaluateStudent(65, 95)); // Failed
